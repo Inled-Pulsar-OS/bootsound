@@ -4,7 +4,7 @@ After=sound.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/aplay /boot/boot-sound.wav
+ExecStart=/usr/bin/pw-play /usr/share/bootsound/boot-sound
 
 [Install]
 WantedBy=multi-user.target

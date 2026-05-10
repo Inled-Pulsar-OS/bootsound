@@ -1,0 +1,13 @@
+[Unit]
+Description=Play sound at shutdown
+After=sound.target
+Conflicts=reboot.target halt.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/true
+ExecStop=/usr/bin/pw-play /usr/share/bootsound/shutdown-sound
+
+[Install]
+WantedBy=multi-user.target
