@@ -16,12 +16,12 @@ fi
 select_sound() {
     local title=$1
     local selected=$(zenity --list --title="$title" \
-        --text="Choose a sound or select 'Custom...' to browse." \
+        --text="Choose a sound (WAV recommended for aplay)." \
         --column="Name" --column="File" \
-        "Windows XP Start" "$DIR/windows_xp_start.mp3" \
-        "XP Shutdown" "$DIR/xp_shutdown.mp3" \
+        "Windows XP Start" "$DIR/windows_xp_start.wav" \
+        "XP Shutdown" "$DIR/xp_shutdown.wav" \
         "Nokia (Tarrega Vals)" "$DIR/nokia.wav" \
-        "MacOS" "$DIR/MacStartupChime.ogg.wav" \
+        "MacOS" "$DIR/MacStartupChime.wav" \
         "None" "none" \
         "Custom..." "custom" \
         --height=350 --width=500 --hide-column=2 --print-column=2)
@@ -60,31 +60,30 @@ run_privileged() {
     pkexec bash -c "$1"
 }
 
-# Cleanup existing installation to ensure a clean state
+# Cleanup existing installation
 CLEANUP_CMD="systemctl disable --now bootsound.service shutdownsound.service 2>/dev/null; \
-             rm -f /etc/systemd/system/bootsound.service /etc/systemd/system/shutdownsound.service; \
-             mkdir -p /usr/share/bootsound"
+             rm -f /etc/systemd/system/bootsound.service /etc/systemd/system/shutdownsound.service"
 
 run_privileged "$CLEANUP_CMD"
 
 # Handle Boot Sound
 if [ -n "$BOOT_SOUND" ]; then
-    INSTALL_BOOT="cp '$BOOT_SOUND' /usr/share/bootsound/boot-sound && \
+    INSTALL_BOOT="cp '$BOOT_SOUND' /boot/boot-sound.wav && \
                   cp '$DIR/bootsound.service' /etc/systemd/system/ && \
                   systemctl enable bootsound.service"
     run_privileged "$INSTALL_BOOT"
 else
-    run_privileged "rm -f /usr/share/bootsound/boot-sound"
+    run_privileged "rm -f /boot/boot-sound.wav"
 fi
 
 # Handle Shutdown Sound
 if [ -n "$SHUTDOWN_SOUND" ]; then
-    INSTALL_SHUTDOWN="cp '$SHUTDOWN_SOUND' /usr/share/bootsound/shutdown-sound && \
+    INSTALL_SHUTDOWN="cp '$SHUTDOWN_SOUND' /boot/shutdown-sound.wav && \
                       cp '$DIR/shutdownsound.service' /etc/systemd/system/ && \
                       systemctl enable shutdownsound.service"
     run_privileged "$INSTALL_SHUTDOWN"
 else
-    run_privileged "rm -f /usr/share/bootsound/shutdown-sound"
+    run_privileged "rm -f /boot/shutdown-sound.wav"
 fi
 
 run_privileged "systemctl daemon-reload"

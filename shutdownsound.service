@@ -7,7 +7,7 @@ Conflicts=reboot.target halt.target
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/bin/true
-ExecStop=/usr/bin/pw-play /usr/share/bootsound/shutdown-sound
+ExecStop=/usr/bin/aplay /boot/shutdown-sound.wav
 
 [Install]
 WantedBy=multi-user.target
